@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="com.outsystems.plugin.urbimaps" version="1.0"
+	xmlns="http://apache.org/cordova/ns/plugins/1.0"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	<name>UrbiMaps</name>
+
+	<js-module name="UrbiMaps" src="www/UrbiMaps.js">
+		<clobbers target="cordova.plugins.UrbiMaps" />
+	</js-module>
+
+	<engines>
+    	<engine name="cordova" version=">=7.1.0"/>
+    	<engine name="cordova-android" version=">=7.0.0"/>
+  	</engines>
+	
+	<platform name="ios">
+
+		<preference name="LocationRequestMessage" default="Your location is required for using our maps" />
+		<!-- Hooks for Swift Support -->
+        <hook type="before_plugin_install" src="hooks/install_prerequisites.js" />
+		<hook type="after_plugin_add" src="hooks/add_swift_support.js" />
+		<!--<hook type="after_plugin_install" src="hooks/add_files_to_xcode_project.js" />-->
+
+        <!--<hook type="before_plugin_install" src="hooks/podfileFix.js" /> -->
+
+        <edit-config target="NSLocationWhenInUseUsageDescription" file="*-Info.plist" mode="merge">
+		    <string>$LocationRequestMessage</string>
+		</edit-config>
+
+	    <podspec>
+	      <pods use-frameworks="true">
+	      	<!-- <pod name="DGisMobileSDK" spec="~> 5.2.1-full" /> -->
+	      	<pod name="DGisMobileSDK" spec="~> 4.2.0-full" />
+	      </pods>
+	    </podspec>
+
+		<config-file parent="/*" target="config.xml">
+			<feature name="UrbiMaps">
+				<param name="ios-package" value="UrbiMaps" />
+			</feature>
+		</config-file>
+		<source-file src="src/ios/UrbiMaps.swift" />
+		<source-file src="src/ios/CameraDemoViewModel.swift" />
+		<source-file src="src/ios/Container.swift" />
+		<source-file src="src/ios/NavigationSettingsView.swift" />
+		<source-file src="src/ios/SearchDemoView.swift" />
+		<source-file src="src/ios/SearchDemoViewModel.swift" />
+		<source-file src="src/neom-logo.png" />
+
+	</platform>
+
+	<!-- ANDROID START -->
+	<platform name="android">
+
+		<config-file target="AndroidManifest.xml" parent="/manifest">
+			<uses-permission android:name="android.permission.INTERNET" />
+			<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+			<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+			<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+        </config-file>
+		
+		<config-file target="config.xml" parent="/*">
+			<preference name="GradlePluginKotlinVersion" value="1.6.0" />
+			<preference name="GradlePluginKotlinEnabled" value="true" />
+            <preference name="GradlePluginKotlinCodeStyle" value="official" />
+            <preference name="AndroidXEnabled" value="true"/>
+			<preference name="android-minSdkVersion" value="22" />
+			<preference name="android-targetSdkVersion" value="33" />
+			<preference name="android-compileSdkVersion" value="33" />
+
+
+			<feature name="UrbiMaps">
+				<param name="android-package" value="com.outsystems.plugin.urbimaps.UrbiMaps" />
+			</feature>
+
+		</config-file>
+
+		<config-file target="AndroidManifest.xml" parent="/manifest/application">
+        	<activity
+            	android:label="MainMapsActivity"
+            	android:name="com.outsystems.plugin.urbimaps.MainMapsActivity"
+            	android:theme="@style/Theme.AppCompat.NoActionBar"/>
+
+        	<activity android:label="SearchActivity" 
+            	android:name="com.outsystems.plugin.urbimaps.SearchActivity"
+            	android:theme="@style/Theme.AppCompat.NoActionBar"/>
+
+        	<activity android:label="MapsGisFullActivity" 
+            	android:name="com.outsystems.plugin.urbimaps.MapsGisFullActivity"
+            	android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        </config-file>
+
+		<config-file target="./res/values/strings.xml" parent="/resources">
+  			<string-array name="route_search_types">
+        		<item>Car</item>
+        		<item>Pedestrian</item>
+        		<item>Bicycle</item>
+    		</string-array>
+		</config-file>
+		
+		<config-file parent="/*" target="AndroidManifest.xml"></config-file>
+		
+		<!-- Setting gradale custom to add 2gis maps dependency -->
+		<framework src="src/android/urbimaps.gradle" custom="true" type="gradleReference" />
+
+		<!-- Copy files Kotlin -->
+		<source-file src="src/android/UrbiMaps.kt" target-dir="app/src/main/kotlin/com/outsystems/plugin/urbimaps" />
+		<source-file src="src/android/MainMapsActivity.kt" target-dir="app/src/main/kotlin/com/outsystems/plugin/urbimaps" />
+		<source-file src="src/android/SearchActivity.kt" target-dir="app/src/main/kotlin/com/outsystems/plugin/urbimaps" />
+		<source-file src="src/android/SdkContext.kt" target-dir="app/src/main/kotlin/com/outsystems/plugin/urbimaps" />
+		<source-file src="src/android/NavigationViewModel.kt" target-dir="app/src/main/kotlin/com/outsystems/plugin/urbimaps" />
+		<source-file src="src/android/MapsGisFullActivity.kt" target-dir="app/src/main/kotlin/com/outsystems/plugin/urbimaps" />
+		<source-file src="src/android/CustomCompassManager.kt" target-dir="app/src/main/kotlin/com/outsystems/plugin/urbimaps" />
+		<source-file src="src/android/CustomLocationManager.kt" target-dir="app/src/main/kotlin/com/outsystems/plugin/urbimaps" />
+
+		<!-- Copies Layouts-->
+		<source-file src="src/android/layouts/activity_main.xml" target-dir="res/layout" />
+		<source-file src="src/android/layouts/activity_maps_full.xml" target-dir="res/layout" />
+		<source-file src="src/android/layouts/activity_search.xml" target-dir="res/layout" />
+		<source-file src="src/android/layouts/item_search.xml" target-dir="res/layout" />
+		<source-file src="src/android/layouts/rounded_edittext.xml" target-dir="res/drawable" />
+		<source-file src="src/android/layouts/rounded_edittext_initial.xml" target-dir="res/drawable" />
+		<source-file src="src/android/layouts/ic_back.xml" target-dir="res/drawable" />
+		<source-file src="src/android/layouts/ic_start.xml" target-dir="res/drawable" />
+		<source-file src="src/android/layouts/ic_finish.xml" target-dir="res/drawable" />
+		<source-file src="src/android/layouts/ic_navigation.xml" target-dir="res/drawable" />
+		<source-file src="src/android/layouts/ic_location.xml" target-dir="res/drawable" />
+		<source-file src="src/android/layouts/route_points_menu.xml" target-dir="res/menu" />
+
+		<!-- Copies Search Items -->
+		<source-file src="src/android/AdapterSearch.kt" target-dir="app/src/main/kotlin/com/outsystems/plugin/urbimaps" />
+
+		<!-- Copy Image Logo NEOM -->
+		<source-file src="src/neom_logo.png" target-dir="res/drawable" />
+
+		<!-- Copy the DGISSDK KEY-->
+		<source-file src="src/dgissdk.key" target-dir="app/src/main/assets" />
+
+	</platform>
+	<!-- ANDROID END -->
+</plugin>

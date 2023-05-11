@@ -1,0 +1,14 @@
+{
+  "name": "UrbiMaps",
+  "version": "1.0.0",
+  "description": "",
+  "cordova": {
+    "id": "outsystems-plugin-urbimaps",
+    "platforms": ["ios", "android"]
+  },
+  "keywords": [
+    "ecosystem:cordova"
+  ],
+  "author": "André Grillo @ OutSystems",
+  "license": "MIT"
+}
