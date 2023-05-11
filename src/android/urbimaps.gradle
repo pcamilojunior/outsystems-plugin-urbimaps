@@ -71,6 +71,6 @@ dependencies {
 }
 
 // Change android SDK version
-ext.cdvMinSdkVersion = 22
-ext.cdvSdkVersion = 33
+//ext.cdvMinSdkVersion = 22
+//ext.cdvSdkVersion = 33
 //ext.cdvBuildToolsVersion = "30.0.3"
