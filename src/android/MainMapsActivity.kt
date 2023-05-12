@@ -1,11 +1,14 @@
 package com.outsystems.plugin.urbimaps
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.InputType
 import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import com.outsystems.experts.neom.R
 import com.outsystems.plugin.urbimaps.SearchActivity.Companion.SEARCH_RESULT
 import com.outsystems.plugin.urbimaps.SearchActivity.Companion.SEARCH_RESULT_CODE
@@ -28,6 +31,8 @@ import ru.dgis.sdk.map.Zoom
 import ru.dgis.sdk.map.createSmoothMyLocationController
 import ru.dgis.sdk.map.imageFromResource
 import ru.dgis.sdk.seconds
+
+private const val PERMISSIONS = 1002
 
 class MainMapsActivity : AppCompatActivity() {
 
@@ -109,13 +114,42 @@ class MainMapsActivity : AppCompatActivity() {
         val gestureManager = checkNotNull(mapView.gestureManager)
         subscribeGestureSwitches(gestureManager)
 
+        if (checkPermission()) {
+            val permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+            ActivityCompat.requestPermissions(this, permissions, PERMISSIONS)
+            return
+        } else {
+            setMyCurrentLocation()
+        }
+    }
+
+    private fun setMyCurrentLocation() {
         mapSource = MyLocationMapObjectSource(
             SdkContext.context,
             MyLocationDirectionBehaviour.FOLLOW_MAGNETIC_HEADING,
             createSmoothMyLocationController()
         )
-        map.addSource(mapSource)
+        map?.addSource(mapSource)
     }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSIONS && grantResults.isNotEmpty()) {
+            setMyCurrentLocation()
+        }
+    }
+
+    private fun checkPermission(): Boolean = ActivityCompat.checkSelfPermission(
+        applicationContext,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+        applicationContext,
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    ) != PackageManager.PERMISSION_GRANTED
 
     private fun subscribeGestureSwitches(gm: GestureManager) {
         gm.enableGesture(Gesture.ROTATION)
