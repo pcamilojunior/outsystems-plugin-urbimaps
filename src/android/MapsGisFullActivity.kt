@@ -294,6 +294,7 @@ class MapsGisFullActivity : AppCompatActivity(), TouchEventsObserver {
                     pos: Int,
                     id: Long
                 ) {
+                    (parent?.getChildAt(0) as? TextView)?.setTextColor(Color.BLACK)
                     viewModel?.routeType = when (pos) {
                         1 -> NavigationViewModel.RouteType.PEDESTRIAN
                         2 -> NavigationViewModel.RouteType.BICYCLE
